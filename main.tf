@@ -3,7 +3,7 @@ module "dev-infra" {
   env    = "dev"
 
   key_name = "dev"
-  ec2_ami  = "ami-0b6d9d3d33ba97d99"
+  ec2_ami  = "ami-01a00762f46d584a1"
 
   instance_types = {
     server-1 = "t3.micro"
@@ -19,7 +19,7 @@ module "prod-infra" {
   env    = "prod"
 
   key_name = "prod"
-  ec2_ami  = "ami-0b6d9d3d33ba97d99"
+  ec2_ami  = "ami-01a00762f46d584a1"
 
   instance_types = {
     server-1 = "t3.micro"
