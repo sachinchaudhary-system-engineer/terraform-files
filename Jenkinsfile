@@ -1,70 +1,94 @@
-pipeline{
+pipeline {
     agent any
 
-    stages{
+    stages {
 
-        stage('checkout code'){
-            steps{
+        stage('Checkout Code') {
+            steps {
                 git branch: 'main',
-                    url: 'https://github.com/sachinchaudhary-system-engineer/terraform-files.git' 
-            echo "code is copied to the source"
+                    url: 'https://github.com/sachinchaudhary-system-engineer/terraform-files.git'
+
+                echo "Code is copied to the workspace"
             }
         }
-        stage('aws cred check'){
-            steps{
+
+        stage('AWS Cred Check') {
+            steps {
                 withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-cred']
+                     credentialsId: 'aws-cred']
                 ]) {
-                sh ' aws  sts get-caller-identity'
+                    sh 'aws sts get-caller-identity'
                 }
             }
         }
 
-        stage('init'){
-            steps{
+        stage('Terraform Init') {
+            steps {
                 withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-cred']
+                     credentialsId: 'aws-cred']
                 ]) {
-                sh 'terraform init  -backend-config=dev-backend.hcl'
+                    sh 'terraform init -backend-config=dev-backend.hcl'
                 }
             }
         }
 
-        stage('validate'){
-            steps{
+        stage('Import Existing S3 Bucket') {
+            steps {
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                     credentialsId: 'aws-cred']
+                ]) {
+                    sh '''
+                        if ! terraform state list | grep -q 'module.dev-infra.aws_s3_bucket.my_bucket'; then
+                            terraform import \
+                              'module.dev-infra.aws_s3_bucket.my_bucket' \
+                              dev-sachin-1999
+                        else
+                            echo "S3 bucket is already in Terraform state"
+                        fi
+                    '''
+                }
+            }
+        }
+
+        stage('Validate') {
+            steps {
                 sh 'terraform validate'
             }
         }
-        stage('plan'){
-            steps{
-               withCredentials([
+
+        stage('Plan') {
+            steps {
+                withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-cred']
+                     credentialsId: 'aws-cred']
                 ]) {
-                sh 'terraform plan'
+                    sh 'terraform plan'
                 }
             }
         }
-        stage('apply'){
-            steps{
-               withCredentials([
+
+        stage('Apply') {
+            steps {
+                withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-cred']
+                     credentialsId: 'aws-cred']
                 ]) {
-                sh 'terraform apply -auto-approve'
+                    sh 'terraform apply -auto-approve'
                 }
             }
         }
     }
-    post{
 
-        success{
-            echo "pipeline is successful"
+    post {
+        success {
+            echo "Pipeline is successful"
         }
-        failure{
-            echo "pipeline failed"
+
+        failure {
+            echo "Pipeline failed"
         }
     }
 }
