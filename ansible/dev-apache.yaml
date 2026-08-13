@@ -1,0 +1,13 @@
+- name: installing apache
+  hosts: dev
+  become: yes
+
+  tasks:
+    - name: copy code
+      copy:
+        src: install.sh
+        dest: /home/ubuntu
+        mode: '755'
+
+    - name: run script
+      command: /home/ubuntu/install.sh 

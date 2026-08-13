@@ -1,0 +1,12 @@
+[dev]
+dev-server-1 ansible_host=52.87.254.22
+dev-server-2 ansible_host=44.214.5.220
+
+[prod]
+prod-server-1 ansible_host=54.82.112.62
+prod-server-2 ansible_host=100.62.94.149
+prod-server-3 ansible_host=32.196.131.216
+
+[all:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=/home/sachin_chaudhary/.ssh/id_ed25519
