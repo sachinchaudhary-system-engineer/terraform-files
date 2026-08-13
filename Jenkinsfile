@@ -57,7 +57,7 @@ pipeline{
                 }
             }
         }
-        stage('init'){
+        stage('backend'){
             steps{
                 withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding',
