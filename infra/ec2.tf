@@ -2,7 +2,7 @@
 
 resource "aws_key_pair" "my_key" {
     key_name = "${var.key_name}-key"
-    public_key = file("/home/sachin_chaudhary/.ssh/id_ed25519.pub")
+    public_key = file("/var/lib/jenkins/id_ed25519.pub")
 }
 
 # ec2
