@@ -27,7 +27,7 @@ pipeline{
                     [$class: 'AmazonWebServicesCredentialsBinding',
                     credentialsId: 'aws-cred']
                 ]) {
-                sh 'terraform init -backend-config=dev-backend.hcl'
+                sh 'terraform init'
                 }
             }
         }
@@ -54,6 +54,16 @@ pipeline{
                     credentialsId: 'aws-cred']
                 ]) {
                 sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+        stage('init'){
+            steps{
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-cred']
+                ]) {
+                sh 'terraform init -backend-config=dev-backend.hcl'
                 }
             }
         }
